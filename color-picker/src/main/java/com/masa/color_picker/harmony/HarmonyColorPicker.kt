@@ -1,5 +1,6 @@
 package com.masa.color_picker.harmony
 
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.forEachGesture
@@ -49,11 +50,12 @@ fun HarmonyColorPicker(
     onColorChanged: (HsvColor) -> Unit,
 ) {
     BoxWithConstraints(modifier) {
-        Column(Modifier
-            .padding(16.dp)
-            .fillMaxHeight()
-            .fillMaxSize()
-        ){
+        Column(
+            Modifier
+                .padding(16.dp)
+                .fillMaxHeight()
+                .fillMaxSize()
+        ) {
             val updatedColor by rememberUpdatedState(color)
             val updatedOnValueChanged by rememberUpdatedState(onColorChanged)
 
@@ -68,7 +70,7 @@ fun HarmonyColorPicker(
                 harmonyMode = harmonyMode,
             )
 
-            if(showBrightnessBar){
+            if (showBrightnessBar) {
                 Text("Brightness")
             }
         }
@@ -81,9 +83,14 @@ private fun HarmonyColorPickerWithMagnifiers(
     hsvColor: HsvColor,
     onColorChanged: (HsvColor) -> Unit,
     harmonyMode: ColorHarmonyMode,
-){
+) {
     val hsvColorUpdated by rememberUpdatedState(hsvColor)
-    BoxWithConstraints {
+    BoxWithConstraints(
+        modifier = modifier
+            .defaultMinSize(minWidth = 48.dp)
+            .wrapContentSize()
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
+    ) {
         val updatedOnColorChanged by rememberUpdatedState(onColorChanged)
         val diameterPx by remember(constraints.maxWidth) {
             mutableStateOf(constraints.maxWidth)
@@ -92,30 +99,32 @@ private fun HarmonyColorPickerWithMagnifiers(
         var animateChanges by remember { mutableStateOf(false) }
         var currentlyChangingInput by remember { mutableStateOf(false) }
 
-        fun updateColorWheel(newPosition: Offset, animate: Boolean){
-            val newColor = colorForPosition(newPosition, IntSize(diameterPx, diameterPx), hsvColorUpdated.value)
-            if(newColor != null){
+        fun updateColorWheel(newPosition: Offset, animate: Boolean) {
+            val newColor = colorForPosition(
+                newPosition,
+                IntSize(diameterPx, diameterPx),
+                hsvColorUpdated.value
+            )
+            if (newColor != null) {
                 animateChanges = animate
                 updatedOnColorChanged(newColor)
             }
         }
 
-        val inputModifier = Modifier.pointerInput(diameterPx){
-            forEachGesture {
-                awaitPointerEventScope {
-                    val down = awaitFirstDown(false)
-                    currentlyChangingInput = true
-                    updateColorWheel(down.position, animate = true)
-                    drag(down.id){ change ->
-                        updateColorWheel(change.position, animate = false)
-                        change.consume()
-                    }
-                    currentlyChangingInput = false
+        val inputModifier = Modifier.pointerInput(diameterPx) {
+            awaitEachGesture {
+                val down = awaitFirstDown(false)
+                currentlyChangingInput = true
+                updateColorWheel(down.position, animate = true)
+                drag(down.id) { change ->
+                    updateColorWheel(change.position, animate = false)
+                    change.consume()
                 }
+                currentlyChangingInput = false
             }
         }
 
-        Box(inputModifier.fillMaxSize()){
+        Box(inputModifier.fillMaxSize()) {
             ColorWheel(hsvColor = hsvColor, diameter = diameterPx)
             HarmonyColorMagnifiers(
                 diameterPx,

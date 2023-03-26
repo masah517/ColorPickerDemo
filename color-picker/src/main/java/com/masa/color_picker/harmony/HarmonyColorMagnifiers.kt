@@ -72,8 +72,12 @@ internal fun HarmonyColorMagnifiers(
 }
 
 internal fun positionForColor(color:HsvColor, size: IntSize): Offset{
-    val radians = color.hue.toRadian()
-    val phi = color.saturation
+    val radians = color.hue.toRadian() // 角度、色相(Hue)をラジアンで表現
+    val phi = color.saturation // 半径、彩度(Saturation)を表現　値は0~１（100％）
+
+    /** phiは彩度で0~１が極値となり、cosやsinの値の範囲は -1 ~ 1 になります。
+     * 　そこで上記-1 ~ 1を最終的に値をOutputとして0~1の範囲内に収めるために、 +1 してから2で除算処理(割り算)をします。
+     */
     val x: Float = ((phi * cos(radians)) + 1) / 2f
     val y: Float = ((phi * sin(radians)) + 1) / 2f
 

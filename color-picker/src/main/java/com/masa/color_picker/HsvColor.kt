@@ -1,7 +1,5 @@
 package com.masa.color_picker
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import com.github.ajalt.colormath.model.HSV
 import com.github.ajalt.colormath.model.RGB
@@ -10,6 +8,7 @@ import com.masa.color_picker.harmony.ColorHarmonyMode
 data class HsvColor(
     // 0 ~ 360
     val hue: Float,
+    // 0 ~ 1
     val saturation: Float,
     // 0 ~ 1
     val value: Float,
@@ -18,7 +17,7 @@ data class HsvColor(
 ){
     companion object{
 
-        private fun HSV.toColor() : HsvColor {
+        private fun HSV.toHSVColor() : HsvColor {
             return HsvColor(
                 hue = if(this.h.isNaN()) 0f else this.h,
                 saturation = this.s,
@@ -33,7 +32,7 @@ data class HsvColor(
                 color.green,
                 color.blue,
                 color.alpha,
-            ).toHSV().toColor()
+            ).toHSV().toHSVColor()
         }
     }
 

@@ -50,7 +50,6 @@ internal fun ColorWheel(
         drawCircle(colorSweepGradientBrush)
         drawCircle(saturationGradientBrush)
 
-
         drawCircle(
             hsvColor.copy(
                 hue = 0F,

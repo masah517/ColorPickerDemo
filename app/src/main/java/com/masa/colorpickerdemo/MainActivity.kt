@@ -38,7 +38,7 @@ fun HarmonyColorPickerScreen(){
             mutableStateOf(ColorHarmonyMode.ANALOGOUS)
         }
 
-        HarmonyColorPicker(modifier = Modifier.size(400.dp), harmonyMode = harmonyMode){
+        HarmonyColorPicker(modifier = Modifier.size(400.dp), color = Color.Yellow, harmonyMode = harmonyMode){
 
         }
         /*
